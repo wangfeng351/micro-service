@@ -1,0 +1,28 @@
+server:
+  port: 8003
+spring:
+  application:
+    name: course-center
+  datasource:
+    url: jdbc:mysql://39.98.143.134:3306/course_center?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+    username: root
+    password: abc.123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+info:
+  app:
+    name: course-center1
+
+eureka:
+  instance:
+    hostname: 47.111.64.183
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:7001/eureka/
+mybatis:
+  type-aliases-package: com.soft1851.cloud.entity
+  configuration:
+    map-underscore-to-camel-case: true

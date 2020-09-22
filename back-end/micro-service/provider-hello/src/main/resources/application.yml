@@ -1,0 +1,18 @@
+server:
+  port: 8005
+
+info:
+  app:
+    name: provider-hello111
+
+spring:
+  application:
+    name: provider-hello
+
+eureka:
+  instance:
+    hostname: wf.com
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:7001/eureka/

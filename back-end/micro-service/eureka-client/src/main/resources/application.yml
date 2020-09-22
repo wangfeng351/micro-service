@@ -1,0 +1,29 @@
+server:
+  port: 8001
+spring:
+  application:
+    name: eureka-client
+
+info:
+  app:
+    name: eureka-client
+    version: 1.0.0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    shutdown:
+      enabled: true
+# 服务注册
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:7001/eureka/
+
