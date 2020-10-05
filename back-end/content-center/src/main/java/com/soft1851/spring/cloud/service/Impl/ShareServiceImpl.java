@@ -13,10 +13,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import sun.security.provider.SHA;
 import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.util.StringUtil;
 
+import javax.swing.border.TitledBorder;
 import java.util.List;
 
 /**
@@ -49,25 +52,29 @@ public class ShareServiceImpl implements ShareService {
     public ShareVo getShareVo(int id) {
         ShareVo shareVo = new ShareVo();
         Share share = shareMapper.selectByPrimaryKey(id);
-        //UserDto userDto = restTemplate.getForObject("http://47.111.64.183:8006/user/{id}", UserDto.class, id);
-        UserDto userDto = userCenterFeignClient.getUserDtoById(id);
-        /*shareVo.setAuditStatus(share.getAuditStatus());
-        shareVo.setAuthor(share.getAuthor());
-        shareVo.setBuyCount(share.getBuyCount());
-        shareVo.setCover(share.getCover());
-        shareVo.setCreateTime(share.getCreateTime());
-        shareVo.setShowFlag(share.getShowFlag());
-        shareVo.setDownloadUrl(share.getDownloadUrl());
-        shareVo.setSummary(share.getSummary());
-        shareVo.setWxNickname(userDto.getWxNickname());
-        shareVo.setUpdateTime(share.getUpdateTime());
-        shareVo.setId(share.getId());
-        shareVo.setIsOriginal(share.getIsOriginal());
-        shareVo.setReason(share.getReason());
-        shareVo.setPrice(share.getPrice());
-        shareVo.setTitle(share.getTitle());*/
+        UserDto userDto = restTemplate.getForObject("http://47.111.64.183:8006/user/{id}", UserDto.class, id);
+        /*UserDto userDto = userCenterFeignClient.getUserDtoById(share.getUserId());*/
         BeanUtils.copyProperties(share, shareVo);
         shareVo.setWxNickname(userDto.getWxNickname());
         return shareVo;
+    }
+    @Override
+    public List<Share> getShareInfoByKeyWords(PageDto pageDto) {
+        //启动分页
+        PageHelper.startPage(pageDto.getPageIndex(), pageDto.getPageSize());
+        //构造查询实例
+        Example example = new Example(Share.class);
+        Example.Criteria criteria = example.createCriteria();
+        //如果标题不为空，再加上模糊查询条件，否则结果返回所有数据
+        if (!StringUtil.isEmpty(pageDto.getKeywords())) {
+            System.out.println("进入模糊查询条件赋值");
+            criteria.andLike("title", "%" + pageDto.getKeywords() + "%");
+        }
+        System.out.println("获取的keywords是： " + pageDto.getKeywords());
+        List<Share> shares = shareMapper.selectByExample(example);
+        System.out.println("获取到的数据是: " + shares);
+        PageInfo<Share> pageInfo = new PageInfo<>(shares);
+        List<Share> shareDel;
+        return pageInfo.getList();
     }
 }

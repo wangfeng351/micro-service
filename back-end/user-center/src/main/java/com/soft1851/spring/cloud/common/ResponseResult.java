@@ -1,7 +1,6 @@
 package com.soft1851.spring.cloud.common;
 
 import lombok.Data;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.Serializable;
 

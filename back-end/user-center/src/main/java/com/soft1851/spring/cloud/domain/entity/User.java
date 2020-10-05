@@ -41,4 +41,8 @@ public class User {
     private Timestamp updateTime;
     @Column(name = "bonus")
     private Integer bonus;
+    @Column(name = "account")
+    private String account;
+    @Column(name = "password")
+    private String password;
 }

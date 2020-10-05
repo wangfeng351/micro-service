@@ -26,4 +26,10 @@ public interface ShareService {
      * @return
      */
     ShareVo getShareVo(int id);
+
+    /**
+     * 通过关键词搜索
+     * @return
+     */
+    List<Share> getShareInfoByKeyWords(PageDto pageDto);
 }

@@ -1,0 +1,256 @@
+= share-app Swagger文档
+
+
+[[_overview]]
+== Overview
+github地址:
+
+
+=== Version information
+[%hardbreaks]
+__Version__ : API V1.0
+
+
+=== Contact information
+[%hardbreaks]
+__Contact__ : 王锋
+__Contact Email__ : wangfeng@gmail.com
+
+
+=== License information
+[%hardbreaks]
+__License__ : Apache
+__License URL__ : http://www.apache.org/
+__Terms of service__ : Terms of service
+
+
+=== URI scheme
+[%hardbreaks]
+__Host__ : localhost:8080
+__BasePath__ : /
+
+
+=== Tags
+
+* 公告接口 : Notice Controller
+* 分享接口 : Share Info Controller
+
+
+
+
+[[_paths]]
+== Resources
+
+[[_917a6a0ad3b9cec276900e3a86586a07]]
+=== 公告接口
+Notice Controller
+
+
+[[_getlastnoticeusingget]]
+==== 查询最新公告消息
+....
+GET /notice/last
+....
+
+
+===== Description
+查询最新公告消息
+
+
+===== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_5660bcd256ba0012c41d3d6f22c17472,通知>>
+|**401**|Unauthorized|No Content
+|**403**|Forbidden|No Content
+|**404**|Not Found|No Content
+|===
+
+
+===== Produces
+
+* `*/*`
+
+
+[[_3ecef281a805f36ea4142625eefacc12]]
+=== 分享接口
+Share Info Controller
+
+
+[[_getshareinfodetailbyidusingpost]]
+==== 查询指定分享信息
+....
+POST /share/detail
+....
+
+
+===== Description
+查询指定分享信息
+
+
+===== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**idDto** +
+__required__|idDto|<<_4c9c720c4f6e09cd99593c0ff92ffa3d,根据id查询>>
+|===
+
+
+===== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_responseresult,ResponseResult>>
+|**201**|Created|No Content
+|**401**|Unauthorized|No Content
+|**403**|Forbidden|No Content
+|**404**|Not Found|No Content
+|===
+
+
+===== Consumes
+
+* `application/json`
+
+
+===== Produces
+
+* `*/*`
+
+
+[[_getshareinfolistusingget]]
+==== 查询所有分享信息
+....
+GET /share/list
+....
+
+
+===== Description
+查询所有分享信息
+
+
+===== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**pageDto** +
+__required__|pageDto|<<_6410db789bec01e3bba2960dbaae7a60,分页Dto>>
+|===
+
+
+===== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|OK|<<_responseresult,ResponseResult>>
+|**401**|Unauthorized|No Content
+|**403**|Forbidden|No Content
+|**404**|Not Found|No Content
+|===
+
+
+===== Produces
+
+* `*/*`
+
+
+
+
+[[_definitions]]
+== Definitions
+
+[[_responseresult]]
+=== ResponseResult
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**code** +
+__optional__|integer (int32)
+|**data** +
+__optional__|object
+|**msg** +
+__optional__|string
+|===
+
+
+[[_timestamp]]
+=== Timestamp
+
+[options="header", cols=".^3,.^4"]
+|===
+|Name|Schema
+|**date** +
+__optional__|integer (int32)
+|**day** +
+__optional__|integer (int32)
+|**hours** +
+__optional__|integer (int32)
+|**minutes** +
+__optional__|integer (int32)
+|**month** +
+__optional__|integer (int32)
+|**nanos** +
+__optional__|integer (int32)
+|**seconds** +
+__optional__|integer (int32)
+|**time** +
+__optional__|integer (int64)
+|**timezoneOffset** +
+__optional__|integer (int32)
+|**year** +
+__optional__|integer (int32)
+|===
+
+
+[[_6410db789bec01e3bba2960dbaae7a60]]
+=== 分页Dto
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**pageIndex** +
+__optional__|当前页数|integer (int32)
+|**pageSize** +
+__optional__|每页的条数|integer (int32)
+|===
+
+
+[[_4c9c720c4f6e09cd99593c0ff92ffa3d]]
+=== 根据id查询
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**id** +
+__optional__|用于根据id查询时使用|integer (int32)
+|===
+
+
+[[_5660bcd256ba0012c41d3d6f22c17472]]
+=== 通知
+
+[options="header", cols=".^3,.^11,.^4"]
+|===
+|Name|Description|Schema
+|**content** +
+__optional__|通知内容|string
+|**createTime** +
+__optional__|创建时间|<<_timestamp,Timestamp>>
+|**id** +
+__optional__|通知id|integer (int32)
+|**showFlag** +
+__optional__|是否显示|boolean
+|===
+
+
+
+
+

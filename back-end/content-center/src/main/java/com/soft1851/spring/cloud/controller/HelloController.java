@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.Random;
@@ -25,12 +26,14 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/hello")
 @Slf4j
+//忽略掉该接口
+@ApiIgnore
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class HelloController {
     private final DiscoveryClient discoveryClient;
     private final RestTemplate restTemplate;
 
-    @GetMapping(value = "hello")
+    @GetMapping(value = "/hello")
     public String testNacos() {
         return "Hello, Nacos!!!";
     }

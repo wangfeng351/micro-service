@@ -1,6 +1,8 @@
 package com.soft1851.spring.cloud.service;
 
+import com.soft1851.spring.cloud.domain.dto.LoginDto;
 import com.soft1851.spring.cloud.domain.dto.UserDto;
+import com.soft1851.spring.cloud.domain.entity.User;
 
 /**
  * @Description TODO
@@ -16,4 +18,11 @@ public interface UserService {
      * @return
      */
     UserDto getUserById(int id);
+
+    /**
+     * 登录接口
+     * @param loginDto
+     * @return
+     */
+    User login(LoginDto loginDto);
 }

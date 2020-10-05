@@ -1,5 +1,7 @@
 package com.soft1851.spring.cloud.feignclient;
 
+import com.soft1851.spring.cloud.configuration.GlobalFeignConfiguration;
+import com.soft1851.spring.cloud.configuration.UserCenterFeignConfiguration;
 import com.soft1851.spring.cloud.domain.dto.UserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @Version 1.0
  */
 //指定到对应的服务应用名上
-@FeignClient("user-center")
+@FeignClient(value = "user-center", configuration = UserCenterFeignConfiguration.class)
+//@FeignClient(value = "user-center")
 public interface UserCenterFeignClient {
 
     /**
@@ -22,6 +25,5 @@ public interface UserCenterFeignClient {
      */
     @GetMapping("/user/{id}")
     UserDto getUserDtoById(@PathVariable int id);
-
 
 }

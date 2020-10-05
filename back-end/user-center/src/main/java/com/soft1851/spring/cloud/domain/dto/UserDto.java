@@ -17,4 +17,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserDto {
     private String wxNickname;
+    private Integer id;
 }
