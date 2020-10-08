@@ -1,6 +1,7 @@
 package com.soft1851.spring.cloud.service.Impl;
 
 import com.soft1851.spring.cloud.domain.dto.LoginDto;
+import com.soft1851.spring.cloud.domain.dto.UserAddBonusMsgDTO;
 import com.soft1851.spring.cloud.domain.dto.UserDto;
 import com.soft1851.spring.cloud.domain.entity.User;
 import com.soft1851.spring.cloud.mapper.UserMapper;
@@ -40,5 +41,13 @@ public class UserServiceImpl implements UserService {
             return user;
         }
         return null;
+    }
+
+    @Override
+    public int updateBonus(UserAddBonusMsgDTO userAddBonusMsgDTO) {
+        User user = userMapper.selectByPrimaryKey(userAddBonusMsgDTO.getUserId());
+        System.out.println("修改用户积分：" + userAddBonusMsgDTO.getBounds());
+        user.setBonus(user.getBonus() + userAddBonusMsgDTO.getBounds());
+        return userMapper.updateByPrimaryKeySelective(user);
     }
 }

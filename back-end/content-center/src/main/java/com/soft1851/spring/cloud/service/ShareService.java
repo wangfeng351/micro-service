@@ -1,6 +1,9 @@
 package com.soft1851.spring.cloud.service;
 
+import com.soft1851.spring.cloud.common.ResponseResult;
 import com.soft1851.spring.cloud.domain.dto.PageDto;
+import com.soft1851.spring.cloud.domain.dto.ShareAuditDTO;
+import com.soft1851.spring.cloud.domain.dto.ShareRequestDto;
 import com.soft1851.spring.cloud.domain.entity.Share;
 import com.soft1851.spring.cloud.domain.vo.ShareVo;
 
@@ -32,4 +35,42 @@ public interface ShareService {
      * @return
      */
     List<Share> getShareInfoByKeyWords(PageDto pageDto);
+
+    /**
+     * 投稿
+     * @return
+     */
+    ResponseResult insertShareInfo(ShareRequestDto shareRequestDto);
+
+    /**
+     * 审核分享内容信息
+     * @param id
+     * @param shareAuditDTO
+     * @return
+     */
+    Share audiById(Integer id, ShareAuditDTO shareAuditDTO);
+
+    /**
+     * 测试Feign调用
+     * @param id
+     * @param shareAuditDTO
+     * @return
+     */
+    Share audiById1(Integer id, ShareAuditDTO shareAuditDTO);
+
+    /**
+     * 测试 AsyncRestTemplate异步
+     * @param id
+     * @param shareAuditDTO
+     * @return
+     */
+    Share audiByAsyncRestTemplate(Integer id, ShareAuditDTO shareAuditDTO);
+
+    /**
+     * 测试 @Async异步
+     * @param id
+     * @param shareAuditDTO
+     * @return
+     */
+    Share audiByAsync(Integer id, ShareAuditDTO shareAuditDTO);
 }

@@ -8,16 +8,27 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:mysql://106.15.234.237:3306/content_center?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+    url: jdbc:mysql://127.0.0.1:3306/content_center?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
     hikari:
       username: root
-      password: abc.123
+      password: root
       driver-class-name: com.mysql.cj.jdbc.Driver
   cloud:
     nacos:
       discovery:
-        server-addr: 47.111.64.183:8848
+        server-addr: 47.115.60.46:8848
+    sentinel:
+      transport:
+        dashboard: localhost:8080
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
 #user-center:
 #  ribbon:
 #    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
@@ -39,3 +50,8 @@ feign:
       # 全局配置
       default:
         loggerLevel: full
+rocketmq:
+  name-server: 47.111.64.183:9876
+  producer:
+    # 必须指定group
+    group: test-group

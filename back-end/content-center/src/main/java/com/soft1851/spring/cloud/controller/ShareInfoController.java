@@ -3,6 +3,7 @@ package com.soft1851.spring.cloud.controller;
 import com.soft1851.spring.cloud.common.ResponseResult;
 import com.soft1851.spring.cloud.domain.dto.IdDto;
 import com.soft1851.spring.cloud.domain.dto.PageDto;
+import com.soft1851.spring.cloud.domain.dto.ShareRequestDto;
 import com.soft1851.spring.cloud.domain.entity.Share;
 import com.soft1851.spring.cloud.service.ShareService;
 import io.swagger.annotations.Api;
@@ -66,5 +67,11 @@ public class ShareInfoController {
     @PostMapping(value = "/keywords")
     public ResponseResult getShareInfoDetailByKeywords(@RequestBody PageDto pageDto) {
         return ResponseResult.success(shareService.getShareInfoByKeyWords(pageDto));
+    }
+
+    @ApiOperation(value = "投稿接口", notes = "投稿接口")
+    @PostMapping(value = "contribute")
+    public ResponseResult contributeShare(@RequestBody ShareRequestDto shareRequestDto) {
+        return shareService.insertShareInfo(shareRequestDto);
     }
 }

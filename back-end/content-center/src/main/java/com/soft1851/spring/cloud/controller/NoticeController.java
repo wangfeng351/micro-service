@@ -31,4 +31,8 @@ public class NoticeController {
         return noticeService.getLastNotice();
     }
 
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
 }

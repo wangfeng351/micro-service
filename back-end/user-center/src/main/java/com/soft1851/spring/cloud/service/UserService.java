@@ -1,6 +1,7 @@
 package com.soft1851.spring.cloud.service;
 
 import com.soft1851.spring.cloud.domain.dto.LoginDto;
+import com.soft1851.spring.cloud.domain.dto.UserAddBonusMsgDTO;
 import com.soft1851.spring.cloud.domain.dto.UserDto;
 import com.soft1851.spring.cloud.domain.entity.User;
 
@@ -25,4 +26,10 @@ public interface UserService {
      * @return
      */
     User login(LoginDto loginDto);
+
+    /**
+     * 修改积分
+     * @return
+     */
+    int updateBonus(UserAddBonusMsgDTO userAddBonusMsgDTO);
 }

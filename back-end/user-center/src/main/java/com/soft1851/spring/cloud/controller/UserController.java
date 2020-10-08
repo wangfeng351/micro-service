@@ -1,7 +1,9 @@
 package com.soft1851.spring.cloud.controller;
 
 import com.soft1851.spring.cloud.common.ResponseResult;
+import com.soft1851.spring.cloud.common.ResultCode;
 import com.soft1851.spring.cloud.domain.dto.LoginDto;
+import com.soft1851.spring.cloud.domain.dto.UserAddBonusMsgDTO;
 import com.soft1851.spring.cloud.domain.dto.UserDto;
 import com.soft1851.spring.cloud.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +38,21 @@ public class UserController {
     @PostMapping("/login")
     public ResponseResult login(@RequestBody LoginDto loginDto){
         return ResponseResult.success(userService.login(loginDto));
+    }
+
+    //修改积分
+    @PutMapping("/update/bonus")
+    public ResponseResult updateBonus(@RequestBody UserAddBonusMsgDTO userAddBonusMsgDTO) {
+        if(userService.updateBonus(userAddBonusMsgDTO) == 1) {
+        return ResponseResult.success();
+        } else {
+            return ResponseResult.failure(ResultCode.DATA_IS_WRONG);
+        }
+    }
+
+    //修改积分
+    @PostMapping("/update/bonus1")
+    public int updateBonus1(@RequestBody UserAddBonusMsgDTO userAddBonusMsgDTO) {
+        return userService.updateBonus(userAddBonusMsgDTO);
     }
 }

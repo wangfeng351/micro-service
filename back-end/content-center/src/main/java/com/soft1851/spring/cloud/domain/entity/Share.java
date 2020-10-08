@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @ApiModel("分享")
 public class Share {
+
     @Id
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(name = "id", value = "分享id")
