@@ -1,7 +1,10 @@
 package com.soft1851.spring.cloud.common;
 
 /**
- * @description 各类返回的状态码
+ * @Description TODO
+ * @Author wf
+ * @Date 2020/10/9
+ * @Version 1.0
  */
 public enum ResultCode {
     /* 成功状态码 */
@@ -63,12 +66,8 @@ public enum ResultCode {
     PERMISSION_NO_ACCESS(70001, "无访问权限"),
 
 
-
-
-
     /*跑腿模块：80001-89999*/
-    ORDER_NOT_CANCLE(80001,"订单正在配送无法取消");
-
+    ORDER_NOT_CANCLE(80001, "订单正在配送无法取消");
 
 
     private Integer code;

@@ -26,6 +26,7 @@ import java.time.Instant;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class NacosWeightedRule extends AbstractLoadBalancerRule {
     private final NacosDiscoveryProperties nacosDiscoveryProperties;
+
     @Override
     public void initWithNiwsConfig(IClientConfig iClientConfig) {
         //读取配置文件，初始化NacosWeightedRule

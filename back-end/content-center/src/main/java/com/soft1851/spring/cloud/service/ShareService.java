@@ -9,6 +9,7 @@ import com.soft1851.spring.cloud.domain.vo.ShareVo;
 
 import java.util.List;
 
+
 /**
  * @Description TODO
  * @Author wf
@@ -19,12 +20,14 @@ public interface ShareService {
 
     /**
      * 获取分享列表
+     *
      * @return
      */
     List<Share> getShareInfoList(PageDto pageDto);
 
     /**
      * 获取分享详情
+     *
      * @param id
      * @return
      */
@@ -32,18 +35,21 @@ public interface ShareService {
 
     /**
      * 通过关键词搜索
+     *
      * @return
      */
     List<Share> getShareInfoByKeyWords(PageDto pageDto);
 
     /**
      * 投稿
+     *
      * @return
      */
     ResponseResult insertShareInfo(ShareRequestDto shareRequestDto);
 
     /**
      * 审核分享内容信息
+     *
      * @param id
      * @param shareAuditDTO
      * @return
@@ -52,6 +58,7 @@ public interface ShareService {
 
     /**
      * 测试Feign调用
+     *
      * @param id
      * @param shareAuditDTO
      * @return
@@ -60,6 +67,7 @@ public interface ShareService {
 
     /**
      * 测试 AsyncRestTemplate异步
+     *
      * @param id
      * @param shareAuditDTO
      * @return
@@ -68,9 +76,24 @@ public interface ShareService {
 
     /**
      * 测试 @Async异步
+     *
      * @param id
      * @param shareAuditDTO
      * @return
      */
     Share audiByAsync(Integer id, ShareAuditDTO shareAuditDTO);
+
+    /**
+     * 通过用户id查询分享列表
+     * @param pageDto
+     * @return
+     */
+    List<Share> getShareListByUserId(PageDto pageDto);
+
+    /**
+     * 获取用户兑换列表
+     * @param userId
+     * @return
+     */
+    List<Share> getUserShareListsByUserId(int userId);
 }

@@ -16,6 +16,7 @@ public interface TestInterface {
 
     /**
      * 返回远程接口的数据
+     *
      * @return
      */
     @GetMapping("")

@@ -1,0 +1,57 @@
+server:
+  port: 8040
+
+spring:
+  application:
+    name: gateway
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/content_center?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+    hikari:
+      username: root
+      password: root
+      driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 47.115.60.46:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+      - id: after_route
+        uri: lb://user-center11
+        predicates:
+          - After=2020-10-1T16:30:00+08:00[Asia/Shanghai]
+      - id: between_route
+        uri: lb://content-center11
+        predicates:
+          - After=2020-10-1T16:30:00+08:00[Asia/Shanghai]
+        # 配置指定路由方式
+      #- id: after_route
+        # uri: localhost:8006/user/{id}
+        # predicates:
+        #  - After=2020-10-24T16:30:00+08:00[Asia/Shanghai]
+        #  - Header=X-Request-Id, \d+
+      # - id: before_route
+      #  uri: localhost:8080/share/list
+      #  predicates:
+      #    - Before=2020-10-9T10:30:00+08:00[Asia/Shanghai]
+      # 指定服务
+      # - id: header_router
+        #  uri: lb://user-center11
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: trace

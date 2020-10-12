@@ -4,7 +4,6 @@ import com.soft1851.spring.cloud.common.ResponseResult;
 import com.soft1851.spring.cloud.domain.dto.IdDto;
 import com.soft1851.spring.cloud.domain.dto.PageDto;
 import com.soft1851.spring.cloud.domain.dto.ShareRequestDto;
-import com.soft1851.spring.cloud.domain.entity.Share;
 import com.soft1851.spring.cloud.service.ShareService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.faces.annotation.RequestParameterMap;
 import java.util.List;
 
 /**
@@ -27,10 +27,11 @@ import java.util.List;
 @Api(tags = "分享接口", value = "提供分享信息相关的Rest API")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ShareInfoController {
-    private  final ShareService shareService;
+    private final ShareService shareService;
 
     /**
      * 查询所有的分享信息
+     *
      * @param pageDto
      * @return
      */
@@ -42,6 +43,7 @@ public class ShareInfoController {
 
     /**
      * 查询分享详情
+     *
      * @param idDto
      * @return
      */
@@ -60,6 +62,7 @@ public class ShareInfoController {
 
     /**
      * 查询分享详情
+     *
      * @param pageDto
      * @return
      */
@@ -73,5 +76,17 @@ public class ShareInfoController {
     @PostMapping(value = "contribute")
     public ResponseResult contributeShare(@RequestBody ShareRequestDto shareRequestDto) {
         return shareService.insertShareInfo(shareRequestDto);
+    }
+
+    @ApiOperation(value = "获取某人所有的分享列表", notes = "获取某人分享列表接口")
+    @PostMapping(value = "my")
+    public ResponseResult getMyShares(@RequestBody PageDto pageDto) {
+        return ResponseResult.success(shareService.getShareListByUserId(pageDto));
+    }
+
+    @ApiOperation(value = "获取某人的兑换列表", notes = "获取兑换列表")
+    @GetMapping(value = "/exchange/shares/{userId}")
+    public ResponseResult getExchangeSharesByUserId(@PathVariable int userId) {
+        return ResponseResult.success(shareService.getUserShareListsByUserId(userId));
     }
 }

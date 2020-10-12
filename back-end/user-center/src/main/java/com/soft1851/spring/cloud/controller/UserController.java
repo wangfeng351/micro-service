@@ -23,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping(value = "{id}")
-    public UserDto getUserDtoById(@PathVariable int id){
+    public UserDto getUserDtoById(@PathVariable int id) {
         System.out.println("获取到的数据是》》" + id);
         return userService.getUserById(id);
     }
@@ -36,15 +36,15 @@ public class UserController {
 
     //登录
     @PostMapping("/login")
-    public ResponseResult login(@RequestBody LoginDto loginDto){
+    public ResponseResult login(@RequestBody LoginDto loginDto) {
         return ResponseResult.success(userService.login(loginDto));
     }
 
     //修改积分
     @PutMapping("/update/bonus")
     public ResponseResult updateBonus(@RequestBody UserAddBonusMsgDTO userAddBonusMsgDTO) {
-        if(userService.updateBonus(userAddBonusMsgDTO) == 1) {
-        return ResponseResult.success();
+        if (userService.updateBonus(userAddBonusMsgDTO) == 1) {
+            return ResponseResult.success();
         } else {
             return ResponseResult.failure(ResultCode.DATA_IS_WRONG);
         }
@@ -54,5 +54,16 @@ public class UserController {
     @PostMapping("/update/bonus1")
     public int updateBonus1(@RequestBody UserAddBonusMsgDTO userAddBonusMsgDTO) {
         return userService.updateBonus(userAddBonusMsgDTO);
+    }
+
+    @PutMapping("/update/bonus2")
+    public int reduceBonus(@RequestParam int bonus, @RequestParam int userId) {
+        System.out.println("进入方法");
+        return userService.reduceBonus(bonus, userId);
+    }
+
+    @GetMapping("/bonus/my/{userId}")
+    public ResponseResult getBonusList(@PathVariable int userId) {
+        return ResponseResult.success(userService.getBonusListByUserId(userId));
     }
 }

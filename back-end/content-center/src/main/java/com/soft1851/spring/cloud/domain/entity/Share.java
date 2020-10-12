@@ -13,13 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-
-
-
 /**
  * @Description TODO
  * @Author wf
- * @Date 2020/9/24
+ * @Date 2020/10/9
  * @Version 1.0
  */
 @Table(name = "share")

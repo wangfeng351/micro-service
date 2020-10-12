@@ -1,6 +1,5 @@
 package com.soft1851.spring.cloud.service.Impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -8,9 +7,11 @@ import com.soft1851.spring.cloud.common.AuditStatusEnum;
 import com.soft1851.spring.cloud.common.ResponseResult;
 import com.soft1851.spring.cloud.common.ResultCode;
 import com.soft1851.spring.cloud.domain.dto.*;
+import com.soft1851.spring.cloud.domain.entity.MidUserShare;
 import com.soft1851.spring.cloud.domain.entity.Share;
 import com.soft1851.spring.cloud.domain.vo.ShareVo;
 import com.soft1851.spring.cloud.feignclient.UserCenterFeignClient;
+import com.soft1851.spring.cloud.mapper.MidUserShareMapper;
 import com.soft1851.spring.cloud.mapper.ShareMapper;
 import com.soft1851.spring.cloud.service.ShareService;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,10 @@ import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.RestTemplate;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,6 +52,7 @@ public class ShareServiceImpl implements ShareService {
     private final UserCenterFeignClient userCenterFeignClient;
     private final RocketMQTemplate rocketMQTemplate;
     private final AsyncRestTemplate asyncRestTemplate;
+    private final MidUserShareMapper midUserShareMapper;
 
     @Override
     public List<Share> getShareInfoList(PageDto pageDto) {
@@ -73,6 +77,7 @@ public class ShareServiceImpl implements ShareService {
         shareVo.setWxNickname(userDto.getWxNickname());
         return shareVo;
     }
+
     @Override
     public List<Share> getShareInfoByKeyWords(PageDto pageDto) {
         //启动分页
@@ -109,7 +114,7 @@ public class ShareServiceImpl implements ShareService {
                 .downloadUrl(shareRequestDto.getDownloadUrl())
                 .build();
         int n = shareMapper.insert(share);
-        if(n == 0) {
+        if (n == 0) {
             System.out.println("投稿异常");
             return ResponseResult.failure(ResultCode.DATABASE_ERROR, "投稿异常");
         } else {
@@ -198,11 +203,11 @@ public class ShareServiceImpl implements ShareService {
         if ("PASS".equals(shareAuditDTO.getAuditStatusEnum())) {
             System.out.println("AsyncRestTemplate异步发送消息：");
             UserAddBonusMsgDTO userAddBonusMsgDTO = UserAddBonusMsgDTO.builder().userId(share.getUserId()).bounds(100).build();
-            HttpEntity<Object> httpEntity = new HttpEntity<>(userAddBonusMsgDTO ,headers);
+            HttpEntity<Object> httpEntity = new HttpEntity<>(userAddBonusMsgDTO, headers);
             //异步发送
             JSONObject jsonObject = (JSONObject) JSONObject.toJSON(userAddBonusMsgDTO);
             ListenableFuture<ResponseEntity<Integer>> addBounds = asyncRestTemplate.postForEntity(url, httpEntity, Integer.class);
-            addBounds.addCallback(result -> log.info(result.getBody().toString()),(e) -> log.error(e.getMessage()));
+            addBounds.addCallback(result -> log.info(result.getBody().toString()), (e) -> log.error(e.getMessage()));
         }
         System.out.println("消耗的时间是： " + (System.currentTimeMillis() - start) + "ms");
         return share;
@@ -230,6 +235,38 @@ public class ShareServiceImpl implements ShareService {
             auditByAsync1(share.getUserId());
         }
         return share;
+    }
+
+    @Override
+    public List<Share> getShareListByUserId(PageDto pageDto) {
+        PageHelper.startPage(pageDto.getPageIndex(), pageDto.getPageSize());
+        Example example = new Example(Share.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("userId", pageDto.getUserId());
+        return new PageInfo<>(shareMapper.selectByExample(example)).getList();
+    }
+
+    @Override
+    public List<Share> getUserShareListsByUserId(int userId) {
+        Example example = new Example(MidUserShare.class);
+        Example.Criteria userCriteria = example.createCriteria();
+        userCriteria.andEqualTo("userId", userId);
+        List<MidUserShare> userShares = midUserShareMapper.selectByExample(example);
+        List<Share> shares = new ArrayList<>();
+        System.out.println("用户兑换的分享：" + userShares.size());
+//        userShares.stream().map(e -> {
+//            System.out.println("分享id是: " + e);
+//           Share share = shareMapper.selectByPrimaryKey(e.getShareId());
+//           shares.add(share);
+//            System.out.println(share);
+//            System.out.println("分享列表： " + shares);
+//           return shares;
+//        });
+        userShares.forEach(e -> {
+            Share share = shareMapper.selectByPrimaryKey(e.getShareId());
+            shares.add(share);
+        });
+        return shares;
     }
 
     @Async
