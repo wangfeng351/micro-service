@@ -39,6 +39,6 @@ public class MidUserShareServiceImpl implements MidUserShareService {
     @Async
     public void updateUserBonus(int bonus, int userId) {
         //更改积分
-        userCenterFeignClient.reduceBonus(bonus, userId);
+        userCenterFeignClient.reduceBonus(bonus, userId, "投稿");
     }
 }

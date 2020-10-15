@@ -36,6 +36,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @Description TODO
@@ -55,24 +56,48 @@ public class ShareServiceImpl implements ShareService {
     private final MidUserShareMapper midUserShareMapper;
 
     @Override
-    public List<Share> getShareInfoList(PageDto pageDto) {
+    public List<Share> getShareInfoList(PageDto pageDto, int userId) {
+        List<Share> returnResult = null;
         Example example = new Example(Share.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("showFlag", true);
         PageHelper.startPage(pageDto.getPageIndex(), pageDto.getPageSize(), "create_time desc");
         List<Share> shareList = shareMapper.selectByExample(example);
         System.out.println(shareList);
+        Example midUserShareExample = new Example(MidUserShare.class);
+        Example.Criteria midUserShareCriteria = midUserShareExample.createCriteria();
+        midUserShareCriteria.andEqualTo("userId", userId);
+        List<MidUserShare> midUserShares = midUserShareMapper.selectByExample(midUserShareExample);
         //分页查询
         PageInfo<Share> pageInfo = new PageInfo<>(shareList);
-        return pageInfo.getList();
+        if(userId == 0) {
+            returnResult = pageInfo.getList().stream()
+                    .peek(share -> {
+                        share.setDownloadUrl(null);
+                    }).collect(Collectors.toList());
+        } else {
+            returnResult = pageInfo.getList().stream()
+                    .peek(share -> {
+                        MidUserShare midUserShare = midUserShareMapper.selectOne(
+                                MidUserShare.builder()
+                                .userId(userId)
+                                .shareId(share.getId())
+                                .build()
+                        );
+                        if(midUserShare == null) {
+                            share.setDownloadUrl(null);
+                        }
+                    }).collect(Collectors.toList());
+        }
+        return returnResult;
     }
 
     @Override
     public ShareVo getShareVo(int id) {
         ShareVo shareVo = new ShareVo();
         Share share = shareMapper.selectByPrimaryKey(id);
-        UserDto userDto = restTemplate.getForObject("http://47.111.64.183:8006/user/{id}", UserDto.class, id);
-        /*UserDto userDto = userCenterFeignClient.getUserDtoById(share.getUserId());*/
+        //UserDto userDto = restTemplate.getForObject("http://47.111.64.183:8006/user/{id}", UserDto.class, id);
+        UserDto userDto = userCenterFeignClient.getUserDtoById(share.getUserId());
         BeanUtils.copyProperties(share, shareVo);
         shareVo.setWxNickname(userDto.getWxNickname());
         return shareVo;
@@ -267,6 +292,26 @@ public class ShareServiceImpl implements ShareService {
             shares.add(share);
         });
         return shares;
+    }
+
+    @Override
+    public int exchangeShare(int shareId, int userId) {
+        //查询是否存在该条记录
+        Share share = shareMapper.selectByPrimaryKey(shareId);
+        //如果存在，判断用户积分是否足够，调取user-center中获取用户详细信息接口
+        UserDetailDto userDetail = userCenterFeignClient.getUserDetailInfo(userId);
+        System.out.println("获取到的用户信息是: " + userDetail);
+        //拿出用户积分与分享信息的积分做对比，看看积分够不够
+        System.out.println("用户积分:" + userDetail.getBonus());
+        System.out.println("帖子积分: " + share.getPrice());
+        if(share.getPrice() < userDetail.getBonus()) {
+            userCenterFeignClient.reduceBonus(share.getPrice(), userId, "兑换");
+            midUserShareMapper.insert(MidUserShare.builder().shareId(shareId).userId(userId).build());
+            return 1;
+        } else {
+            System.out.println("你的积分不足");
+            return 0;
+        }
     }
 
     @Async

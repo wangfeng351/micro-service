@@ -1,8 +1,6 @@
 package com.soft1851.spring.cloud.service;
 
-import com.soft1851.spring.cloud.domain.dto.LoginDto;
-import com.soft1851.spring.cloud.domain.dto.UserAddBonusMsgDTO;
-import com.soft1851.spring.cloud.domain.dto.UserDto;
+import com.soft1851.spring.cloud.domain.dto.*;
 import com.soft1851.spring.cloud.domain.entity.BonusEventLog;
 import com.soft1851.spring.cloud.domain.entity.User;
 
@@ -44,7 +42,7 @@ public interface UserService {
      * @param bonus
      * @return
      */
-    int reduceBonus(int bonus, int userId);
+    int reduceBonus(int bonus, int userId, String description);
 
     /**
      * 获取用户积分列表
@@ -52,4 +50,25 @@ public interface UserService {
      * @return
      */
     List<BonusEventLog> getBonusListByUserId(int userId);
+
+    /**
+     * 小程序登录
+     * @param wxLoginDto
+     * @param openId
+     * @return
+     */
+    User WxLogin(WxLoginDto wxLoginDto, String openId);
+
+    /**
+     * 根据id获取用户信息
+     * @param userId
+     * @return
+     */
+    UserDetailDto getUserInfoById(int userId);
+
+    /**
+     * 用户签到
+     * @return
+     */
+    int signIn(int userId);
 }

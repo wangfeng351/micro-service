@@ -1,5 +1,8 @@
 package com.soft1851.spring.cloud;
 
+import cn.binarywang.wx.miniapp.api.WxMaService;
+import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
+import cn.binarywang.wx.miniapp.config.WxMaConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -18,4 +21,5 @@ public class SpringCloudApplication {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
 }

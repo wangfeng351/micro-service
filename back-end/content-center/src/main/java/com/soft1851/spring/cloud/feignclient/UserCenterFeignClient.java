@@ -1,7 +1,10 @@
 package com.soft1851.spring.cloud.feignclient;
 
+import com.soft1851.spring.cloud.common.ResponseResult;
+import com.soft1851.spring.cloud.common.ResultCode;
 import com.soft1851.spring.cloud.configuration.UserCenterFeignConfiguration;
 import com.soft1851.spring.cloud.domain.dto.UserAddBonusMsgDTO;
+import com.soft1851.spring.cloud.domain.dto.UserDetailDto;
 import com.soft1851.spring.cloud.domain.dto.UserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -42,5 +45,15 @@ public interface UserCenterFeignClient {
      * @return
      */
     @PutMapping("/user/update/bonus2")
-    int reduceBonus(@RequestParam int bonus, @RequestParam int userId);
+    int reduceBonus(@RequestParam int bonus, @RequestParam int userId, @RequestParam String description);
+
+    /**
+     * 根据用户id查询用户信息
+     *
+     * @param userId
+     * @return
+     */
+    @GetMapping("/user/detail/{userId}")
+    UserDetailDto getUserDetailInfo(@PathVariable int userId);
+
 }

@@ -1,15 +1,19 @@
 package com.soft1851.spring.cloud.controller;
 
 import com.soft1851.spring.cloud.common.ResponseResult;
+import com.soft1851.spring.cloud.domain.dto.ExchangeDto;
 import com.soft1851.spring.cloud.domain.dto.IdDto;
 import com.soft1851.spring.cloud.domain.dto.PageDto;
 import com.soft1851.spring.cloud.domain.dto.ShareRequestDto;
 import com.soft1851.spring.cloud.service.ShareService;
+import com.soft1851.spring.cloud.util.JwtOperator;
+import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -28,7 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ShareInfoController {
     private final ShareService shareService;
-
+    private final JwtOperator jwtOperator;
     /**
      * 查询所有的分享信息
      *
@@ -37,8 +41,17 @@ public class ShareInfoController {
      */
     @ApiOperation(value = "查询所有分享信息", notes = "查询所有分享信息")
     @PostMapping(value = "/list")
-    public ResponseResult getShareInfoList(@RequestBody PageDto pageDto) {
-        return ResponseResult.success(shareService.getShareInfoList(pageDto));
+    public ResponseResult getShareInfoList(@RequestBody PageDto pageDto, @RequestHeader(value = "X-Token", required = false) String token) {
+        System.out.println(token.length());
+        Integer userId = null;
+        if(token.length() > 30) {
+            Claims claims = this.jwtOperator.getClaimsFromToken(token);
+            userId = (Integer) claims.get("id");
+        } else {
+            userId = 0;
+        }
+        System.out.println("用户id是: " + userId);
+        return ResponseResult.success(shareService.getShareInfoList(pageDto, userId));
     }
 
     /**
@@ -88,5 +101,12 @@ public class ShareInfoController {
     @GetMapping(value = "/exchange/shares/{userId}")
     public ResponseResult getExchangeSharesByUserId(@PathVariable int userId) {
         return ResponseResult.success(shareService.getUserShareListsByUserId(userId));
+    }
+
+    @ApiOperation(value = "兑换下载")
+    @PostMapping("/exchange/shareInfo")
+    public ResponseResult exchangeShare(@RequestBody ExchangeDto exchangeDto){
+        System.out.println("获取到的数据是: " + exchangeDto.toString());
+        return ResponseResult.success(shareService.exchangeShare(exchangeDto.getShareId(), exchangeDto.getUserId()));
     }
 }

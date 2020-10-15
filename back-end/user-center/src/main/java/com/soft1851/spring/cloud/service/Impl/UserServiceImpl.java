@@ -1,20 +1,22 @@
 package com.soft1851.spring.cloud.service.Impl;
 
-import com.soft1851.spring.cloud.domain.dto.LoginDto;
-import com.soft1851.spring.cloud.domain.dto.UserAddBonusMsgDTO;
-import com.soft1851.spring.cloud.domain.dto.UserDto;
+import com.soft1851.spring.cloud.domain.dto.*;
 import com.soft1851.spring.cloud.domain.entity.BonusEventLog;
 import com.soft1851.spring.cloud.domain.entity.User;
 import com.soft1851.spring.cloud.mapper.BonusEventLogMapper;
 import com.soft1851.spring.cloud.mapper.UserMapper;
 import com.soft1851.spring.cloud.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.bouncycastle.util.Times;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,7 +61,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int reduceBonus(int bonus, int userId) {
+    public int reduceBonus(int bonus, int userId, String description) {
         System.out.println("进入该方法");
         Example example = new Example(User.class);
         Example.Criteria criteria = example.createCriteria();
@@ -69,10 +71,10 @@ public class UserServiceImpl implements UserService {
         //新增减分日志
         bonusEventLogMapper.insert(BonusEventLog.builder()
                 .userId(userId)
-                .value(bonus)
+                .value(-bonus)
                 .event("CONTRIBUTE")
                 .createTime(Timestamp.valueOf(LocalDateTime.now()))
-                .description("下载分享扣分")
+                .description(description)
                 .build());
         return userMapper.updateByPrimaryKey(user);
     }
@@ -83,5 +85,65 @@ public class UserServiceImpl implements UserService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("userId", userId);
         return bonusEventLogMapper.selectByExample(example);
+    }
+
+    @Override
+    public User WxLogin(WxLoginDto wxLoginDto, String openId) {
+        //先根据openId查找用户
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("wxId", openId);
+        List<User> users = this.userMapper.selectByExample(example);
+        System.out.println("获取到的信息是: >>>>>>>" + wxLoginDto);
+
+        //没找到，是新用户，直接注册
+        if (users.size() == 0) {
+            User saveUser = User.builder()
+                    .wxId(openId)
+                    .account("")
+                    .password("")
+                    .avatarUrl(wxLoginDto.getAvatarUrl())
+                    .wxNickname(wxLoginDto.getWxNickname())
+                    .roles("user")
+                    .bonus(100)
+                    .createTime(Timestamp.valueOf(LocalDateTime.now()))
+                    .updateTime(Timestamp.valueOf(LocalDateTime.now()))
+                    .build();
+            this.userMapper.insertSelective(saveUser);
+            return saveUser;
+        }
+        System.out.println("返回数据是: " + users);
+        return users.get(0);
+    }
+
+    @Override
+    public UserDetailDto getUserInfoById(int userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        UserDetailDto userDetailDto = new UserDetailDto();
+        BeanUtils.copyProperties(user, userDetailDto);
+        System.out.println("获取到的用户数据是： " + userDetailDto);
+        return userDetailDto;
+    }
+
+    @Override
+    public int signIn(int userId) {
+        //获取用户信息
+        User user = userMapper.selectByPrimaryKey(userId);
+        user.setBonus(user.getBonus() + 50);
+        userMapper.updateByPrimaryKey(user);
+        Example example = new Example(BonusEventLog.class);
+        Example.Criteria criteria = example.createCriteria();
+        String start = DateFormatUtils.format(new Date(), "yyyy-MM-dd 00:00:00");
+        String end = DateFormatUtils.format(new Date(), "yyyy-MM-dd 23:59:59");
+        criteria.andEqualTo("userId", userId).andBetween("createTime", Timestamp.valueOf(start), Timestamp.valueOf(end));
+        BonusEventLog bonusEventLog = bonusEventLogMapper.selectOneByExample(example);
+        if(bonusEventLog != null) {
+            System.out.println("今日已签到");
+            return 2;
+        } else {
+            return bonusEventLogMapper.insert(BonusEventLog.builder().userId(userId)
+                    .description("签到").event("签到")
+                    .value(50).createTime(Timestamp.valueOf(LocalDateTime.now())).build());
+        }
     }
 }

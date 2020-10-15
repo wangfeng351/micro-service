@@ -4,8 +4,6 @@ server:
 spring:
   application:
     name: gateway
-  jackson:
-    date-format: yyyy-MM-dd HH:mm:ss
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/content_center?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
     hikari:
@@ -15,7 +13,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 47.115.60.46:8848
+        server-addr: 47.111.64.183:8848
     gateway:
       discovery:
         locator:
@@ -24,11 +22,11 @@ spring:
       - id: after_route
         uri: lb://user-center11
         predicates:
-          - After=2020-10-1T16:30:00+08:00[Asia/Shanghai]
-      - id: between_route
+          - After=2010-01-20T17:42:47.789-07:00[Asia/Shanghai]
+      - id: before_route
         uri: lb://content-center11
         predicates:
-          - After=2020-10-1T16:30:00+08:00[Asia/Shanghai]
+          - After=2010-01-20T17:42:47.789-07:00[Asia/Shanghai]
         # 配置指定路由方式
       #- id: after_route
         # uri: localhost:8006/user/{id}

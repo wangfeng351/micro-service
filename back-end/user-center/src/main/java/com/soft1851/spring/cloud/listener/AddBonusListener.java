@@ -42,7 +42,7 @@ public class AddBonusListener implements RocketMQListener<UserAddBonusMsgDTO> {
                 .value(userAddBonusMsgDTO.getBounds())
                 .event("CONTRIBUTE")
                 .createTime(Timestamp.valueOf(LocalDateTime.now()))
-                .description("投稿加积分")
+                .description("投稿")
                 .build());
     }
 }

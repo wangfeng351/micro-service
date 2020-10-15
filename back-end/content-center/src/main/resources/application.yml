@@ -34,7 +34,7 @@ management:
 #    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
 
 server:
-  port: 8080
+  port: 8081
 #ribbon:
 #  eager-load:
 #    clients: user-center
@@ -55,3 +55,6 @@ rocketmq:
   producer:
     # 必须指定group
     group: test-group
+jwt:
+  secret: aaaaaaabbbbbbcccccdddddaaaaaaabbbbbbcccccdddddaaaaaaabbbbbbcccccddddd
+  expire-time-in-second: 1209600

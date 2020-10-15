@@ -23,7 +23,7 @@ public interface ShareService {
      *
      * @return
      */
-    List<Share> getShareInfoList(PageDto pageDto);
+    List<Share> getShareInfoList(PageDto pageDto, int UserId);
 
     /**
      * 获取分享详情
@@ -96,4 +96,11 @@ public interface ShareService {
      * @return
      */
     List<Share> getUserShareListsByUserId(int userId);
+
+    /**
+     * 兑换分享信息
+     * @param shareId
+     * @param userId
+     */
+    int exchangeShare(int shareId, int userId);
 }
