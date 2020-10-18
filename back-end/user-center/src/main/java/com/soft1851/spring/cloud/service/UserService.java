@@ -28,7 +28,7 @@ public interface UserService {
      * @param loginDto
      * @return
      */
-    User login(LoginDto loginDto);
+    FlLoginDto login(LoginDto loginDto);
 
     /**
      * 修改积分

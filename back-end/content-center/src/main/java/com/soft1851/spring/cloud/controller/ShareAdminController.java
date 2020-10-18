@@ -1,5 +1,6 @@
 package com.soft1851.spring.cloud.controller;
 
+import com.soft1851.spring.cloud.common.ResponseResult;
 import com.soft1851.spring.cloud.domain.dto.ShareAuditDTO;
 import com.soft1851.spring.cloud.domain.entity.Share;
 import com.soft1851.spring.cloud.service.ShareService;
@@ -26,10 +27,10 @@ public class ShareAdminController {
     }
 
     //测试Fegin请求方法
-    @PutMapping(value = "/auditByFegin/{id}")
-    public Share auditByFeign(@PathVariable Integer id, @RequestBody ShareAuditDTO shareAuditDTO) {
+    @PostMapping(value = "/auditByFegin/{id}")
+    public ResponseResult auditByFeign(@PathVariable Integer id, @RequestBody ShareAuditDTO shareAuditDTO) {
         //此处需要认证授权
-        return this.shareService.audiById1(id, shareAuditDTO);
+        return ResponseResult.success(this.shareService.audiById1(id, shareAuditDTO));
     }
 
     //测试AsyncRestTemplate异步请求方法

@@ -128,9 +128,10 @@ public class UserController {
         Example.Criteria criteria = example.createCriteria();
         String start = DateFormatUtils.format(new Date(), "yyyy-MM-dd 00:00:00");
         String end = DateFormatUtils.format(new Date(), "yyyy-MM-dd 23:59:59");
-        criteria.andEqualTo("userId", user.getId()).andBetween("createTime", Timestamp.valueOf(start), Timestamp.valueOf(end));
+        criteria.andEqualTo("userId", user.getId()).andEqualTo("description", "签到").andBetween("createTime", Timestamp.valueOf(start), Timestamp.valueOf(end));
         BonusEventLog bonusEventLog = bonusEventLogMapper.selectOneByExample(example);
         // 颁发token
+        System.out.println("获取到的日志是: " + bonusEventLog);
         Map<String, Object> userInfo = new HashMap<>(3);
         boolean isSignIn  = false;
         if(bonusEventLog != null) {
@@ -186,7 +187,7 @@ public class UserController {
         return userService.getUserInfoById(userId);
     }
 
-    @PutMapping(value = "/signIn/{userId}")
+    @PostMapping(value = "/signIn/{userId}")
     public ResponseResult signIn(@PathVariable int userId) {
         return ResponseResult.success(userService.signIn(userId));
     }

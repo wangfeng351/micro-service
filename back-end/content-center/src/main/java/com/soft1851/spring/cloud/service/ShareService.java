@@ -103,4 +103,10 @@ public interface ShareService {
      * @param userId
      */
     int exchangeShare(int shareId, int userId);
+
+    /**
+     * 查询未审核的帖子
+     * @return
+     */
+    List<Share> getNotCheckList();
 }

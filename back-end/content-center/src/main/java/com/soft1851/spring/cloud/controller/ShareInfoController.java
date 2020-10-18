@@ -109,4 +109,11 @@ public class ShareInfoController {
         System.out.println("获取到的数据是: " + exchangeDto.toString());
         return ResponseResult.success(shareService.exchangeShare(exchangeDto.getShareId(), exchangeDto.getUserId()));
     }
+
+    @ApiOperation(value = "获取所有未审核的帖子")
+    @GetMapping(value = "/notCheck")
+    public ResponseResult getNotCheckList() {
+        return ResponseResult.success(shareService.getNotCheckList());
+    }
+
 }

@@ -6,7 +6,9 @@ import com.soft1851.spring.cloud.domain.entity.User;
 import com.soft1851.spring.cloud.mapper.BonusEventLogMapper;
 import com.soft1851.spring.cloud.mapper.UserMapper;
 import com.soft1851.spring.cloud.service.UserService;
+import com.soft1851.spring.cloud.util.JwtOperator;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.bouncycastle.util.Times;
 import org.springframework.beans.BeanUtils;
@@ -18,6 +20,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description TODO
@@ -30,6 +33,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final BonusEventLogMapper bonusEventLogMapper;
+    private final JwtOperator jwtOperator;
 
     @Override
     public UserDto getUserById(int id) {
@@ -40,14 +44,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(LoginDto loginDto) {
+    public FlLoginDto login(LoginDto loginDto) {
         Example example = new Example(User.class);
         example.setOrderByClause("create_time DESC");
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("account", loginDto.getAccount());
         User user = userMapper.selectOneByExample(example);
+        System.out.println("用户信息是: " + user);
+        Map<String, Object> userInfo = new HashedMap();
+        userInfo.put("id", user.getId());
+        userInfo.put("wxNickname", user.getWxNickname());
+        userInfo.put("role", user.getRoles());
+        String token = jwtOperator.generateToken(userInfo);
+        UserRespDTO userRespDTO = new UserRespDTO();
+        BeanUtils.copyProperties(user, userRespDTO);
+        Example example1 = new Example(BonusEventLog.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        String start = DateFormatUtils.format(new Date(), "yyyy-MM-dd 00:00:00");
+        String end = DateFormatUtils.format(new Date(), "yyyy-MM-dd 23:59:59");
+        criteria1.andEqualTo("userId", user.getId()).andEqualTo("description", "签到").andBetween("createTime", Timestamp.valueOf(start), Timestamp.valueOf(end));
+        BonusEventLog bonusEventLog = bonusEventLogMapper.selectOneByExample(example1);
+        boolean isSignIn  = false;
+        if(bonusEventLog != null) {
+            isSignIn = true;
+        }
         if (user.getPassword().equals(loginDto.getPassword())) {
-            return user;
+            return FlLoginDto.builder().user(user)
+                    .token(JwtTokenRespDTO.builder()
+                            .token(token)
+                            .expirationTime(jwtOperator.getExpirationTime().getTime()).build())
+                    .isSignIn(isSignIn)
+                    .build();
         }
         return null;
     }
@@ -135,7 +162,7 @@ public class UserServiceImpl implements UserService {
         Example.Criteria criteria = example.createCriteria();
         String start = DateFormatUtils.format(new Date(), "yyyy-MM-dd 00:00:00");
         String end = DateFormatUtils.format(new Date(), "yyyy-MM-dd 23:59:59");
-        criteria.andEqualTo("userId", userId).andBetween("createTime", Timestamp.valueOf(start), Timestamp.valueOf(end));
+        criteria.andEqualTo("userId", userId).andEqualTo("description", "签到").andBetween("createTime", Timestamp.valueOf(start), Timestamp.valueOf(end));
         BonusEventLog bonusEventLog = bonusEventLogMapper.selectOneByExample(example);
         if(bonusEventLog != null) {
             System.out.println("今日已签到");

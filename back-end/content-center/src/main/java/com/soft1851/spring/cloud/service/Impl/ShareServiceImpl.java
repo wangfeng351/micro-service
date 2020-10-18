@@ -193,6 +193,7 @@ public class ShareServiceImpl implements ShareService {
         //这个API的主要流程是审核，所以不需要等更新积分的结果返回，可以将加积分改为异步
         share.setAuditStatus(shareAuditDTO.getAuditStatusEnum().toString());
         this.shareMapper.updateByPrimaryKey(share);
+        midUserShareMapper.insert(MidUserShare.builder().userId(share.getUserId()).shareId(id).build());
         System.out.println("用户id是>>>>" + share.getUserId());
         System.out.println("是否通过: " + AuditStatusEnum.PASS.equals(shareAuditDTO.getAuditStatusEnum()));
         //3. 如果是PASS，那么发送消息给rocketmq，让用户中心去消费，并为发布人添加积分
@@ -312,6 +313,14 @@ public class ShareServiceImpl implements ShareService {
             System.out.println("你的积分不足");
             return 0;
         }
+    }
+
+    @Override
+    public List<Share> getNotCheckList() {
+        Example example = new Example(Share.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("auditStatus", "NOT_YET");
+        return shareMapper.selectByExample(example);
     }
 
     @Async

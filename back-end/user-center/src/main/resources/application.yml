@@ -1,8 +1,15 @@
 info:
   name: user-center11
 spring:
+#  zipkin:
+#    base-url: http://localhost:9411/
+#    discoveryClientEnabled: false
+  sleuth:
+    sampler:
+      probability: 1.0
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   application:
     name: user-center11
   datasource:
@@ -30,3 +37,8 @@ rocketmq:
 jwt:
   secret: aaaaaaabbbbbbcccccdddddaaaaaaabbbbbbcccccdddddaaaaaaabbbbbbcccccddddd
   expire-time-in-second: 1209600
+
+#logging:
+#  level:
+#    com.alibaba.nacos: error
+#    org.springframework.cloud.sleuth: debug
